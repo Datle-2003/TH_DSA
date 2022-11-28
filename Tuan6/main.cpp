@@ -16,7 +16,7 @@ struct Bucket
     Ref *head;
 };
 
-// create Ref
+
 Ref *createRef(int key)
 {
     Ref *p = new Ref();
@@ -25,7 +25,7 @@ Ref *createRef(int key)
     return p;
 }
 
-// add Ref in linkedlist
+
 void addRef(Bucket *current, int key)
 {
     if (current->head == nullptr) // add head
@@ -35,7 +35,6 @@ void addRef(Bucket *current, int key)
     }
     Ref *p = nullptr;
     for (p = current->head; p; p = p->next)
-        ;
     p->next = createRef(key);
 }
 
