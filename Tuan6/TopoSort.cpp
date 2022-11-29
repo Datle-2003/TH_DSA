@@ -64,7 +64,23 @@ void topoSort()
         }
     }
 
-    
+    // free memory
+    leader *q = head;
+    while (q)
+    {
+        trailer *t = q->trail;
+        while (t)
+        {
+            q->trail = q->trail->next;
+            delete t;
+            t = q->trail;
+        }
+        head = head->next;
+        delete q;
+        q = head;
+    }
+
+    delete tail;
 }
 
 leader *addList(leader *&head, leader *&tail, int value, int &size)
