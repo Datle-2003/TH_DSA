@@ -26,5 +26,4 @@ struct trailer
 
 void TopoSort();
 leader *addList(leader *&head, leader *&tail, int value, int &size);
-void topoSort();
 #endif

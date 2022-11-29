@@ -1,18 +1,5 @@
-#ifndef BUCKET_SORT_H
-#define BUCKET_SORT_H
+#include "RadixSort.h"
 
-struct Ref
-{
-    int key;
-    Ref *next;
-};
-
-struct Bucket
-{
-    int key;
-    Bucket *next;
-    Ref *head;
-};
 
 Ref *createRef(int value)
 {
@@ -83,10 +70,47 @@ void addBucket(Bucket *head, Bucket *tail, int key, int value)
     p1->next = temp;
 }
 
-void radixSort()
+int getDigits(int num)
 {
-    Bucket *head, *tail = nullptr;
-    
+    int count = 0;
+    while (num)
+    {
+        count++;
+        num /= 10;
+    }
+    return count;
 }
 
-#endif
+void radixSort(vector<int> &nums, int k)
+{
+    Bucket *head, *tail = nullptr;
+
+    int max = *std::max(nums.begin(), nums.end());
+    int n = getDigits(max);
+    int tmp = 1;
+    int cnt = 0;
+    for (int i = 0; i < ceil(n / k); i++)
+    {
+        for (int i = 0; i < nums.size(); i++)
+        {
+            // calculate key
+            int key = nums[i] % int(pow(10, tmp * k)) / pow(10, (tmp - 1) * k);
+            addBucket(head, tail, key, nums[i]);
+        }
+        Bucket *p = head;
+        while (p)
+        {
+            Ref *temp = head->head;
+            while (temp)
+            {
+                nums[cnt++] = temp->key;
+                head->head = head->head->next;
+                delete temp;
+                temp = head->head;
+            }
+            head = head->next;
+            delete p;
+            p = head;
+        }
+    }
+}

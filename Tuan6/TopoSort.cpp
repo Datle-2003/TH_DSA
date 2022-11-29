@@ -12,7 +12,7 @@ void readFile(vector<pair<int, int>> &P)
     }
 }
 
-void topoSort()
+void TopoSort()
 {
     leader *head = new leader;
     leader *tail = head;
@@ -65,7 +65,7 @@ void topoSort()
     }
 
     // free memory
-    leader *q = head;
+    q = head;
     while (q)
     {
         trailer *t = q->trail;
