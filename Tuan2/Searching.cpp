@@ -20,7 +20,6 @@ bool isFound(const char *text, int pos, const char *pattern, int n)
 // 2 is Rabin-Karp
 // 3 is Knuth-Morris-Patt
 // 4 is Boyer-Moore
-
 int typeOfSearching(char *name)
 {
     if (strcmp(name, "BF") == 0)
