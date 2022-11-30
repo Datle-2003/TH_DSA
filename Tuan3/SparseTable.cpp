@@ -1,4 +1,4 @@
-#include "SpareTable.h"
+#include "SparseTable.h"
 
 typedef int (*condition)(int, int);
 int findMax(int a, int b)
@@ -20,7 +20,7 @@ int findGCD(int a, int b)
     return findGCD(b, a % b);
 }
 
-void buildSpareTable(vector<int> &nums, const char *filename, int type)
+void buildSparseTable(vector<int> &nums, const char *filename, int type)
 {
     int n = nums.size();
     int (*condition)(int, int);
@@ -34,6 +34,7 @@ void buildSpareTable(vector<int> &nums, const char *filename, int type)
     // table has n row
     table.resize(n);
 
+    // build 
     // first col
     for (int i = 0; i < n; i++)
         table[i].push_back(nums[i]);
@@ -43,7 +44,6 @@ void buildSpareTable(vector<int> &nums, const char *filename, int type)
     {
         for (int i = 0; i + (1 << j) - 1 < n; i++)
         {
-            // vector<int> tmp;
             int tmp = condition(table[i][j - 1], table[i + (1 << (j - 1))][j - 1]);
             table[i].push_back(tmp);
         }
@@ -71,7 +71,7 @@ int query(int L, int R, const char *filename)
     vector<vector<int>> table;
     table = readFile(filename);
     int j = log2(R - L + 1);
-
+    
     if (table[0][1] == findMin(table[0][0], table[1][0]))
         return findMin(table[R - (1 << j) + 1][j], table[L][j]);
 
