@@ -1,6 +1,5 @@
 #include "RadixSort.h"
 
-
 Ref *createRef(int value)
 {
     Ref *p = new Ref;
@@ -9,7 +8,7 @@ Ref *createRef(int value)
     return p;
 }
 
-void addRef(Bucket *current, int value)
+void addRef(Bucket *&current, int value)
 {
     if (current->head == nullptr) // add head
     {
@@ -26,22 +25,31 @@ Bucket *createBucket(int key, int value)
 {
     Bucket *q = new Bucket;
     q->key = key;
+    q->head = nullptr;
     q->next = nullptr;
     addRef(q, value);
     return q;
 }
 
-void addBucket(Bucket *head, Bucket *tail, int key, int value)
+void addBucket(Bucket *&head, int key, int value)
 {
 
-    if (head == tail)
+    if (head == nullptr)
     {
         head = createBucket(key, value);
-        tail = head;
         return;
     }
     Bucket *p1 = head;
     Bucket *p2 = head->next;
+
+    // add first
+    if (key < head->key)
+    {
+        Bucket *tmp = createBucket(key, value);
+        tmp->next = head;
+        head = tmp;
+        return;
+    }
 
     while (p2 && p2->key <= key)
     {
@@ -50,10 +58,10 @@ void addBucket(Bucket *head, Bucket *tail, int key, int value)
     }
 
     // the last bucket
-    if (p2 == tail)
+    if (p1->next == nullptr)
     {
-        p2->next = createBucket(key, value);
-        tail = tail->next;
+        p2 = createBucket(key, value);
+        p1->next = p2;
         return;
     }
 
@@ -81,21 +89,34 @@ int getDigits(int num)
     return count;
 }
 
-void radixSort(vector<int> &nums, int k)
+int getMax(vector<int> nums)
 {
-    Bucket *head, *tail = nullptr;
+    int max = nums[0];
+    for (int i = 1; i < nums.size(); i++)
+        if (max < nums[i])
+            max = nums[i];
+    return max;
+}
 
-    int max = *std::max(nums.begin(), nums.end());
-    int n = getDigits(max);
+void RadixSort()
+{
+    vector<int> nums;
+    int k;
+    readFile("input.txt", k, nums);
+    Bucket *head = nullptr;
+
+    int maxNum = getMax(nums);
+    int n = getDigits(maxNum);
     int tmp = 1;
     int cnt = 0;
     for (int i = 0; i < ceil(n / k); i++)
     {
-        for (int i = 0; i < nums.size(); i++)
+        cnt = 0;
+        for (int j = 0; j < nums.size(); j++)
         {
             // calculate key
-            int key = nums[i] % int(pow(10, tmp * k)) / pow(10, (tmp - 1) * k);
-            addBucket(head, tail, key, nums[i]);
+            int key = nums[j] % int(pow(10, tmp * k)) / pow(10, (tmp - 1) * k);
+            addBucket(head, key, nums[j]);
         }
         Bucket *p = head;
         while (p)
@@ -112,5 +133,20 @@ void radixSort(vector<int> &nums, int k)
             delete p;
             p = head;
         }
+        tmp++;
     }
+
+    // print
+    for (int i = 0; i < nums.size(); i++)
+        cout << nums[i] << " ";
+}
+
+void readFile(const char *filename, int &k, vector<int> &nums)
+{
+    fstream f(filename, ios::in);
+    int n;
+    f >> k >> n;
+    nums.resize(n);
+    for (int i = 0; i < n; i++)
+        f >> nums[i];
 }
