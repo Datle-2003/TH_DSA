@@ -3,8 +3,8 @@
 
 #include <iostream>
 #include <vector>
-#include <algorithm>
 #include <cmath>
+#include <fstream>
 
 using namespace std;
 
@@ -22,10 +22,11 @@ struct Bucket
 };
 
 Ref *createRef(int value);
-void addRef(Bucket *current, int value);
+void addRef(Bucket *&current, int value);
 Bucket *createBucket(int key, int value);
-void addBucket(Bucket *head, Bucket *tail, int key, int value);
+void addBucket(Bucket *&head, int key, int value);
 int getDigits(int num);
-void radixSort(vector<int> &nums, int k);
+void RadixSort();
+void readFile(const char *filename, int &k, vector<int> &nums);
 
 #endif
