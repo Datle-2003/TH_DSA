@@ -25,9 +25,9 @@ void Insert(TrieNode* &Dic, string word, int id){
     }
     TrieNode* pTrie = Dic;
     for(int i = 0; i < word.size(); i++){
-        // word has not present from i-th character in the string
+        // word has not present from the i-th character in the string
         if(pTrie->next[pos(word[i])] == nullptr){
-            // create new node, move to new node and set nullptr to all node
+            // create new node, move to new node and set nullptr to all its child node
             pTrie->next[pos(word[i])] = new TrieNode;
             pTrie = pTrie->next[pos(word[i])];
             pTrie->id = -1;// mark as not present
@@ -97,9 +97,9 @@ string extractWord(stack<char> s){
         res.push_back(rev[i]);
     return res;
 }
-// depth-first traversal function to collect all the word from the starting node
+// depth-first traversal function to collect all the words from the starting node
 void df_collectWord(TrieNode* pTrie, stack<char>& s, vector<string>& wordList){
-    if(pTrie->id != -1) // if this node is present, then the word in q is in dic
+    if(pTrie->id != -1) // if this node is present, then the word in s is in dic
         wordList.push_back(extractWord(s));// push to word list
     for(int i = 0; i < NUM_CHAR; i++){
         if(pTrie->next[i] != nullptr){
@@ -139,9 +139,9 @@ void Remove(TrieNode* Dic, string word){
     for(int i = 0; i < word.size(); i++){
         if(pTrie->next[pos(word[i])] == nullptr)
             return;// not found the word
-        posNode.push(pos(word[i]));
+        posNode.push(pos(word[i]));// trace
         pTrie = pTrie->next[pos(word[i])];
-        checkNode.push(pTrie); 
+        checkNode.push(pTrie);// trace
     }
     pTrie->id = -1;// in case not deleting node
     // check if the node before 'word' needed to delete 
@@ -149,15 +149,17 @@ void Remove(TrieNode* Dic, string word){
     checkNode.pop();
     while(!posNode.empty()){// until no need to check pos
         for(int i = 0; i < NUM_CHAR; i++){
-            if(curNode->next[i] != nullptr)// node with prefix as word still present in trie 
+            if(curNode->next[i] != nullptr)// node with prefix as 'word' still present in trie 
                 return;// therefore, no need to delete the node
         }
         // delete the current checking node and all its parent node if needed
-        delete curNode;
-        curNode = checkNode.top();
+        delete curNode;// current node deleted
+        curNode = checkNode.top();// go to the parent node
         checkNode.pop();
-        curNode->next[posNode.top()] = nullptr;
+        curNode->next[posNode.top()] = nullptr;// assign nullptr for deleted node
         posNode.pop();
+        // return the loop for the parent node, parent node is deleted 
+        // when all of its child were deleted
     }
 }
 
