@@ -1,22 +1,37 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <iomanip>
 #include "lzw_compression.h"
 
 using namespace std;
 
-int main(){
-    string str = "WYS*WYSWYG*WYSWYSG";
-    // 97 98 256 97 256
-    // ab: 256, ba: 257, aa: 258 
-    vector<int> compressList = lzw_compress(str);
-    cout << "List after compression: ";
-    for(int num: compressList){
-        cout << num << " ";
+// command args for compression: exe_file "-c" string 
+// command args for decompression: exe_file "-a" string
+int main(int argc, char** argv){
+    string str;
+    vector<int> list;
+    string mode;
+    int compressionMode = readArgs(str, list, mode, argc, argv);
+    if(!compressionMode){
+        cerr << "Wrong argument!\n";
+        return 0;
     }
-    cout << "\n";
-    cout << "String after decompression: ";
-    cout << lzw_decompress(compressList) << "\n";
-    
+    if(compressionMode == 1){
+        // compress
+        list = lzw_compress(str);
+        for(int num: list){
+            cout << num << " ";
+        }
+        cout << "\n";
+        printBinaryList(list);
+        cout << "\n";
+        cout << fixed << setprecision(2) << compressRatio(str, list) << "\n";
+    }
+    else{
+        str = lzw_decompress(list);
+        cout << str << "\n";
+        cout << fixed << setprecision(2) << compressRatio(str, list) << "\n";
+    }
     return 0;
 }
