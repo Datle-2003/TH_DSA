@@ -7,7 +7,7 @@
 using namespace std;
 
 // command args for compression: exe_file "-c" string 
-// command args for decompression: exe_file "-a" string
+// command args for decompression: exe_file "-a" num_list
 int main(int argc, char** argv){
     string str;
     vector<int> list;
