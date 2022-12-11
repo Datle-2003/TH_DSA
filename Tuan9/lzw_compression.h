@@ -13,7 +13,7 @@ string lzw_decompress(vector<int> compressValue);
 double compressRatio(string str, vector<int> compressList);
 
 // auxiliary function
-bool readArgs(string &str, vector<int>& compressionList, string &mode, int argc, char** argv);
+bool readArgs(string &str, vector<int> &compressionList, string &mode, int argc, char **argv);
 void printBinary(int num);
 void printBinaryList(vector<int> compressionList);
 

@@ -10,25 +10,27 @@
 using namespace std;
 
 #define NUM_CHAR 26
-struct TrieNode{
+struct TrieNode
+{
     int id;
-    TrieNode* next[NUM_CHAR];
+    TrieNode *next[NUM_CHAR];
 };
 
 int pos(char c);
 char word(int pos);
 
-void Insert(TrieNode* &Dic, string word, int id);
+void Insert(TrieNode *&Dic, string word, int id);
 
-void readFile(ifstream& ifs, string& word, int& id);
-void createTrie(TrieNode* &Dic, string dicFile);
+void readFile(ifstream &ifs, string &word, int &id);
+void createTrie(TrieNode *&Dic, string dicFile);
 
-int lookUp(TrieNode* Dic, string word);
+int lookUp(TrieNode *Dic, string word);
 
 string extractWord(stack<char> s);
-void df_collectWord(TrieNode* pTrie, stack<char>& s, vector<string>& wordList);
-vector<string> lookUpPrefix(TrieNode* Dic, string prefix);
+void df_collectWord(TrieNode *pTrie, stack<char> &s, vector<string> &wordList);
+vector<string> lookUpPrefix(TrieNode *Dic, string prefix);
 
-void Remove(TrieNode* Dic, string word);
-void removeTrie(TrieNode* &Dic);
+void Remove(TrieNode *Dic, string word);
+void removeTrie(TrieNode *&Dic);
+
 #endif

@@ -1,4 +1,4 @@
-#include "SpareTable.h"
+#include "SparseTable.h"
 
 void Processing(int argc, char **argv)
 {
@@ -11,7 +11,7 @@ void Processing(int argc, char **argv)
             nums.push_back(atoi(argv[i]));
         int type = typeOfTable(argv[3]);
         const char *filename = argv[2];
-        buildSpareTable(nums, filename, type);
+        buildSparseTable(nums, filename, type);
     }
     if (type == "query")
     {
