@@ -2,16 +2,6 @@
 
 // convention: The smaller the element, the higher the priority
 
-void updateOrder(Node *&head)
-{
-    int i = 0;
-    for (Node *p = head; p; p = p->next)
-    {
-        p->Order = i;
-        i++;
-    }
-}
-
 Node *create(string ID, int Order, int Priority)
 {
     Node *newNode = new Node;
@@ -57,7 +47,6 @@ void Insert(Node *&head, string ID, int Order, int Priority)
     Node *temp = create(ID, Order, Priority);
     t1->next = temp;
     temp->next = t2;
-    updateOrder(head);
 }
 
 Node *Extract(Node *&head)
@@ -70,7 +59,6 @@ Node *Extract(Node *&head)
     // update head
     head = head->next;
     delete p2;
-    updateOrder(head); // update order
     return p1;
 }
 
@@ -114,7 +102,14 @@ bool changePriority(Node *&head, string ID, int Priority)
     // list is empty
     if (head == NULL)
         return false;
-
+    // change head
+    if (head->ID == ID)
+    {
+        int Order = head->Order;
+        Extract(head);
+        Insert(head, ID, Order, Priority);
+        return true;
+    }
     bool isFound = false;
     Node *p = head->next;
     Node *q = head;
@@ -133,10 +128,10 @@ bool changePriority(Node *&head, string ID, int Priority)
     if (!isFound)
         return false;
     // delete old node and add new node
-    int tmp = p->Order;
     q->next = p->next;
+    int Order = p->Order;
     delete p;
-    Insert(head, ID, tmp, Priority);
+    Insert(head, ID, Order, Priority);
     return true;
 }
 

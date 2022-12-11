@@ -4,6 +4,11 @@ void readFile(vector<pair<int, int>> &P)
 {
     char tmp;
     fstream f("input.txt", ios::in);
+    if (!f)
+    {
+        cerr << "Can't open this file";
+        exit(1);
+    }
     while (f >> tmp)
     {
         int a, b;
@@ -14,48 +19,54 @@ void readFile(vector<pair<int, int>> &P)
 
 void TopoSort()
 {
+    // create head and tail
     leader *head = new leader;
     leader *tail = head;
-    int size = 0;
+    int size = 0; // size of leader-list
     vector<pair<int, int>> nums;
     readFile(nums);
     for (int i = 0; i < nums.size(); i++)
     {
+        // add each pair <int, int> to leader-list
         leader *p = addList(head, tail, nums[i].first, size);
         leader *q = addList(head, tail, nums[i].second, size);
 
-        trailer *t = new trailer;
+        trailer *t = new trailer; // manage the nodes behind the current node
         t->id = q;
+        // add node to trailer
         t->next = p->trail;
         p->trail = t;
+        // numbers of node before current node
         q->count++;
     }
 
+    // find nodes has 0 node before and put them up to the top of linked-list
     leader *p = head;
     head = NULL;
     while (p != tail)
     {
         leader *q = p;
         p = p->next;
-        if (q->count == 0)
+        if (q->count == 0) // current node doesn't have any node before
         {
             q->next = head;
             head = q;
         }
     }
 
+    // print
     leader *q = head;
     while (q)
     {
-        cout << q->key << " ";
+        cout << q->key << " "; // print current node
         size--;
-        trailer *t = q->trail;
+        trailer *t = q->trail; // traversal nodes after current node
         q = q->next;
         while (t)
         {
             leader *p = t->id;
             p->count--;
-            if (p->count == 0)
+            if (p->count == 0) // current node doesn't have any node before
             {
                 p->next = q;
                 q = p;
@@ -87,8 +98,11 @@ leader *addList(leader *&head, leader *&tail, int value, int &size)
 {
     leader *h = head;
     tail->key = value;
+
     while (h->key != value)
         h = h->next;
+    // if value is already exist, do nothing
+    // else assign new leader to tail and create new tail
     if (h == tail)
     {
         tail = new leader;

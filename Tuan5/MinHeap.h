@@ -16,7 +16,7 @@ struct Object
 
 bool isEmpty(vector<Object> &P);
 Object Extract(vector<Object> &P);
-void Insert(vector<Object> &P, string ID, int Priority);
+void Insert(vector<Object> &P, string ID, int Order, int Priority);
 bool Remove(vector<Object> &P, string ID);
 bool changePriority(vector<Object> &P, string ID, int priority);
 istream &operator>>(istream &is, Object &Obj);

@@ -1,11 +1,5 @@
 #include "MinHeap.h"
 
-void updateOrder(vector<Object> &Obj)
-{
-    for (int i = 0; i < Obj.size(); i++)
-        Obj[i].Order = i;
-}
-
 bool isEmpty(vector<Object> &P)
 {
     // return true if size = 0
@@ -29,7 +23,6 @@ void UpdateQueue(vector<Object> &P, int l, int r)
         i = j;
         j = 2 * i + 1;
     }
-    updateOrder(P);
 }
 
 Object Extract(vector<Object> &P)
@@ -43,7 +36,6 @@ Object Extract(vector<Object> &P)
     size--;
     // update queue
     UpdateQueue(P, 0, size);
-    updateOrder(P);
     return temp;
 }
 
@@ -62,13 +54,11 @@ void PushObjectBack(vector<Object> &P, int index)
         index = i; // update index
         i = floor((i - 1) * 1.0 / 2);
     }
-    // update order of queue
-    updateOrder(P);
 }
 
-void Insert(vector<Object> &P, string ID, int Priority)
+void Insert(vector<Object> &P, string ID, int Order, int Priority)
 {
-    P.push_back({ID, 0, Priority});
+    P.push_back({ID, Order, Priority});
     int j = P.size() - 1;
     PushObjectBack(P, j); // update queue after push back new object
 }
