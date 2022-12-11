@@ -34,8 +34,9 @@ void buildSparseTable(vector<int> &nums, const char *filename, int type)
     // table has n row
     table.resize(n);
 
-    // build 
+    // build sparse table
     // first col
+    // min, max, gcd of single element is element itself
     for (int i = 0; i < n; i++)
         table[i].push_back(nums[i]);
 
@@ -70,8 +71,10 @@ int query(int L, int R, const char *filename)
 {
     vector<vector<int>> table;
     table = readFile(filename);
+    // split [L, R] into 2 segments, each segment has 2 ^ j elements
     int j = log2(R - L + 1);
-    
+
+    // get type of sparse table(min, max, gcd)
     if (table[0][1] == findMin(table[0][0], table[1][0]))
         return findMin(table[R - (1 << j) + 1][j], table[L][j]);
 

@@ -6,7 +6,7 @@ vector<vector<int>> readFile(const char *filename)
     fstream f(filename, ios::in);
     std::string line;
 
-    while (std::getline(f, line))
+    while (std::getline(f, line)) // read line by line
     {
         vector<int> tmp;
         std::stringstream ss(line);
