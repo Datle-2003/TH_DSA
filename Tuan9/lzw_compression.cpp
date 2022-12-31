@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <cmath>
 
 using namespace std;
 
@@ -71,7 +72,7 @@ string lzw_decompress(vector<int> compressValue)
                 decompressTable[count++] = decompressTable[compressValue[i]] + char(compressValue[j]);
         }
         else
-        { // not found, in case string like 'aaaaaa...' happens (87 256 257 ...)
+        { // not found case
             // count = compressValue[i], update the decompress table
             decompressTable[count++] = decompressTable[compressValue[i - 1]] + decompressTable[compressValue[i - 1]].front();
             str += decompressTable[compressValue[i]]; // then add to str the newly update value
@@ -83,10 +84,13 @@ double compressRatio(string str, vector<int> compressList)
 {
     // N - n: number of bits before and after compression
     int N = str.length() * 8; // before compression
-    int n = 0;
-    int divider = 256; // number of possible value stored in 1 byte
-    for (int val : compressList)
-        n += (val / divider) + 8; // get number of bits needed to store val
+    int maxBit = 8;
+    int numBit, n;
+    for (int val : compressList){
+        numBit = int(floor(log2(val))) + 1;// determine minimal bit required to store
+        if(maxBit < numBit) maxBit = numBit; 
+    }
+    n = compressList.size() * maxBit;// number of bits in compressList 
     return (double(N - n) / N) * 100;
 }
 
@@ -99,6 +103,7 @@ int readArgs(string &str, vector<int> &compressionList, string &mode, int argc, 
     if (mode == "-c")
         if (argc == 3)
         {
+            // read info to compress
             str = argv[2];
             return 1;
         }
@@ -107,6 +112,7 @@ int readArgs(string &str, vector<int> &compressionList, string &mode, int argc, 
     else if (mode == "-e")
     {
         for (int i = 2; i < argc; i++)
+            // read info to decompress
             compressionList.push_back(stoi(string(argv[i])));
         return -1;
     }
@@ -114,7 +120,7 @@ int readArgs(string &str, vector<int> &compressionList, string &mode, int argc, 
         return 0;
 }
 
-void printBinary(int num)
+void printBinary(int num, int maxBit)
 {
     string str;
     while (num != 0)
@@ -122,9 +128,9 @@ void printBinary(int num)
         str.push_back((num % 2) + '0');
         num /= 2;
     }
-    while (str.size() < 8)
+    while (str.size() < maxBit)
     {
-        str.push_back('0'); // '0' till enough 8 bytes
+        str.push_back('0'); // '0' till enough 'maxBit' bytes
     }
     for (int i = str.size() - 1; i >= 0; i--)
         cout << str[i]; // reversed str is the desired bit list
@@ -132,9 +138,16 @@ void printBinary(int num)
 }
 void printBinaryList(vector<int> compressionList)
 {
+    int numBit, maxBit = 8;
+    // find the maximum number of bits required in list
+    for (int num : compressionList){
+        numBit = int(floor(log2(num))) + 1;
+        if(maxBit < numBit) maxBit = numBit;
+    }
     for (int num : compressionList)
     {
-        printBinary(num);
+        // print each number accordingly
+        printBinary(num, maxBit);
         cout << " ";
     }
 }

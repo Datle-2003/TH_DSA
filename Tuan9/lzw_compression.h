@@ -6,15 +6,16 @@
 
 using namespace std;
 
-// compress and decompress
+// compress and decompress function
 vector<int> lzw_compress(string str);
 string lzw_decompress(vector<int> compressValue);
+
 // calculate ratio
 double compressRatio(string str, vector<int> compressList);
 
 // auxiliary function
 bool readArgs(string &str, vector<int> &compressionList, string &mode, int argc, char **argv);
-void printBinary(int num);
+void printBinary(int num, int maxBit);
 void printBinaryList(vector<int> compressionList);
 
 #endif

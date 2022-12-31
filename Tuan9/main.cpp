@@ -7,12 +7,13 @@
 using namespace std;
 
 // command args for compression: exe_file "-c" string
-// command args for decompression: exe_file "-a" num_list
+// command args for decompression: exe_file "-e" num_list
 int main(int argc, char **argv)
 {
     string str;
     vector<int> list;
     string mode;
+    // determine compress mode
     int compressionMode = readArgs(str, list, mode, argc, argv);
     if (!compressionMode)
     {
@@ -23,6 +24,7 @@ int main(int argc, char **argv)
     {
         // compress
         list = lzw_compress(str);
+        // print result
         for (int num : list)
         {
             cout << num << " ";
@@ -34,7 +36,9 @@ int main(int argc, char **argv)
     }
     else
     {
+        // decompress
         str = lzw_decompress(list);
+        // print result
         cout << str << "\n";
         cout << fixed << setprecision(2) << compressRatio(str, list) << "\n";
     }
