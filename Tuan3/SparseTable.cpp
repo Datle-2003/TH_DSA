@@ -1,6 +1,7 @@
 #include "SparseTable.h"
 
 typedef int (*condition)(int, int);
+
 int findMax(int a, int b)
 {
     return a > b ? a : b;
@@ -20,13 +21,14 @@ int findGCD(int a, int b)
     return findGCD(b, a % b);
 }
 
-void buildSparseTable(vector<int> &nums, const char *filename, int type)
+void buildSparseTable(vector<int> &nums, const char *filename, string type)
 {
     int n = nums.size();
     int (*condition)(int, int);
-    if (type == 1)
+    int tp = typeOfTable(type);
+    if (tp == 1)
         condition = findMin;
-    else if (type == 2)
+    else if (tp == 2)
         condition = findMax;
     else
         condition = findGCD;
@@ -35,12 +37,13 @@ void buildSparseTable(vector<int> &nums, const char *filename, int type)
     table.resize(n);
 
     // build sparse table
-    // first col
+
+    // for the first col
     // min, max, gcd of single element is element itself
     for (int i = 0; i < n; i++)
         table[i].push_back(nums[i]);
 
-    // others col
+    // for the others col
     for (int j = 1; (1 << j) <= n; j++)
     {
         for (int i = 0; i + (1 << j) - 1 < n; i++)
@@ -49,20 +52,21 @@ void buildSparseTable(vector<int> &nums, const char *filename, int type)
             table[i].push_back(tmp);
         }
     }
-    writeToFile(table, filename);
-    printToConsole(table);
+    // save the table to file and print to the console
+    writeToFile(table, filename, type);
+    printToConsole(table, type);
 }
 
 // 1 - MIN
 // 2 - MAX
 // 3 - GCD
-int typeOfTable(const char *type)
+int typeOfTable(string type)
 {
-    if (strcmp(type, "MIN") == 0)
+    if (type == "MIN")
         return 1;
-    if (strcmp(type, "MAX") == 0)
+    if (type == "MAX")
         return 2;
-    if (strcmp(type, "GCD") == 0)
+    if (type == "GCD")
         return 3;
     return 0;
 }
@@ -70,15 +74,15 @@ int typeOfTable(const char *type)
 int query(int L, int R, const char *filename)
 {
     vector<vector<int>> table;
-    table = readFile(filename);
+    string type = "";
+    table = readFile(filename, type);
     // split [L, R] into 2 segments, each segment has 2 ^ j elements
     int j = log2(R - L + 1);
-
     // get type of sparse table(min, max, gcd)
-    if (table[0][1] == findMin(table[0][0], table[1][0]))
+    if (type == "MIN")
         return findMin(table[R - (1 << j) + 1][j], table[L][j]);
 
-    if (table[0][1] == findMax(table[0][0], table[1][0]))
+    if (type == "MAX")
         return findMax(table[R - (1 << j) + 1][j], table[L][j]);
 
     return findGCD(table[R - (1 << j) + 1][j], table[L][j]);

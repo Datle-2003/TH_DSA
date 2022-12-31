@@ -1,7 +1,12 @@
 #include "SparseTable.h"
 
-void Processing(int argc, char **argv)
+int main(int argc, char **argv)
 {
+    if (argc < 4)
+    {
+        cerr << "Error!\n";
+        return 1;
+    }
     string type = argv[1];
     if (type == "make")
     {
@@ -9,21 +14,18 @@ void Processing(int argc, char **argv)
         vector<int> nums;
         for (int i = 4; i < argc; i++)
             nums.push_back(atoi(argv[i]));
-        int type = typeOfTable(argv[3]);
         const char *filename = argv[2];
-        buildSparseTable(nums, filename, type);
+        // build the table
+        buildSparseTable(nums, filename, string(argv[3]));
     }
     if (type == "query")
     {
+        // read the range of the query
         int L = atoi(argv[3]);
         int R = atoi(argv[4]);
         const char *filename = argv[2];
+        // print result to the console
         std::cout << query(L, R, filename) << "\n";
     }
-}
-
-int main(int argc, char **argv)
-{
-    Processing(argc, argv);
     return 0;
 }

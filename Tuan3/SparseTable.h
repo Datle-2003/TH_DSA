@@ -6,7 +6,7 @@
 #include "FileProcessing.h"
 
 using namespace std;
-void buildSparseTable(vector<int> &nums, const char *filename, int type);
-int typeOfTable(const char *type);
+void buildSparseTable(vector<int> &nums, const char *filename, string type);
+int typeOfTable(string type);
 int query(int L, int R, const char *filename);
 #endif

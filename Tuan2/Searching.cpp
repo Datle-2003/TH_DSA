@@ -1,5 +1,6 @@
 #include "Searching.h"
 
+// read characters from a file
 void readfile(fstream &f, char *s, int &n)
 {
     char buffer;
@@ -8,13 +9,15 @@ void readfile(fstream &f, char *s, int &n)
     f.close();
 }
 
-// Kiểm tra chuỗi pattern có nằm trong chuỗi text kể từ vị trí pos hay không
+// Check if the pattern is found in the text starting at the specified position
 bool isFound(const char *text, int pos, const char *pattern, int n)
 {
+    // compare each character in two string
     for (int i = 0; i < n; i++)
         if (text[pos++] != pattern[i])
-            return false;
-    return true;
+            return false; // character does not match
+
+    return true; // all characters match
 }
 
 // 1 is Brute-force
@@ -38,25 +41,29 @@ void BruteForce(char *text, int tsize, char *pattern, int psize, int &count)
 {
     for (int i = 0; i <= tsize - psize; i++) // Duyệt mảng text
     {
-        if (text[i] == pattern[0]) // Nếu tồn tại kí tự trong mảng text giống kí tự đầu tiên trong mảng pattern thì kiểm tra các kí tự tiếp theo
+        // if the first character in pattern is found in text, check the rest of pattern
+        if (text[i] == pattern[0])
         {
-            if (isFound(text, i, pattern, psize)) // Kiểm tra chuỗi pattern nằm trong text kể từ vị trí i
+            // if pattern is found in text, increment the count
+            if (isFound(text, i, pattern, psize))
                 count++;
         }
     }
 }
 
-// tính mã hash của chuỗi kể từ vị trí begin -> end
-long long getHashcode(char *temp, int begin, int end)
+// calculate the hash code of the characters in the array from start position to end position
+long long getHashcode(char *temp, int start, int end)
 {
     long long hashcode = 0;
     int j = 0;
-    for (int i = begin; i <= end; i++)
+    for (int i = start; i <= end; i++)
     {
         // Mã hash của chuỗi = tổng mã hash của từng kí tự
         // Mã hash của ký tự = vị trí của ký tự trong bảng chữ cái(tính từ 1) * 10 ^ j
         // với j là vị trí của ký tự đó trong chuỗi (tính từ 0)
         hashcode += int(temp[i] - 'A' + 1) * pow(10, j);
+        // calculate the hash code of the current character
+        // hash code of character = position of character in alphabet * 10 ^ position of character in array
         j++;
     }
     return hashcode;
@@ -64,21 +71,25 @@ long long getHashcode(char *temp, int begin, int end)
 
 void RabinKarp(char *text, int tsize, char *pattern, int psize, int &count)
 {
-    // mã hash của chuỗi pattern
+    // calculate the hash code of the pattern
     long long hashCodePattern = getHashcode(pattern, 0, psize - 1);
-    // Mã hash của chuỗi con có độ dài bằng chuỗi pattern từ vị trí 0 trong text
+
+    // hash code of the the first substring in text that is the same langth as pattern
     long long hashCode = getHashcode(text, 0, 0 + psize - 1);
     for (int i = 0; i <= tsize - psize; i++)
     {
-        if (hashCode == hashCodePattern) // 2 chuỗi có cùng mã hash -> Kiểm tra 2 chuỗi giống nhau hay không
+        // if the hash code of the current substring matches the hash code of pattern
+        if (hashCode == hashCodePattern)
         {
+            // check if two strings are actually equal or not
             if (isFound(text, i, pattern, psize))
                 count++;
         }
-        if (i == tsize - psize) // Không còn chuỗi con trong text có cùng độ dài với pattern kể từ vị trí i
+        // no more substrings in the text have the same length as the pattern
+        if (i == tsize - psize)
             break;
-        // Cập nhật mã hash cho chuỗi con tiếp theo
-        // Mã hash mới = (Mã hash cũ - Mã hash của phần từ trái cùng) / 10 + Mã hash của phần từ phải cùng
+        // update new hash code for the next substring in text
+        // new hash code = current hash code - hash code of the leftmost character / 10 + hash code of the rightmost character
         hashCode = (hashCode - int(text[i] - 'A' + 1)) / 10 + int(text[i + psize] - 'A' + 1) * pow(10, psize - 1);
     }
 }
@@ -89,18 +100,25 @@ void createLongestPrefixSuffix(int *lps, int n, char *pattern)
     int i = 1, j = 0, count = 1;
     while (i < n)
     {
+        // the character at the current position match
         while (pattern[i] == pattern[j])
         {
+            // set the current element of the array to the length of the matching prefix/suffix
             lps[count++] = j + 1;
+            // move to the next character
             i++;
             j++;
         }
+        // character does not match
         while (pattern[i] != pattern[j] && j != 0 && i < n)
-            // xuất hiện sai khác -> Quay lui về vị trí lps[j - 1];
+            // move to the position indicated by the previous element
             j = lps[j - 1];
+        // no matching prefix/suffix
         if (j == 0)
         {
+            // move to the next character
             i++;
+            // set the current element of the array to 0
             lps[count++] = 0;
         }
     }
@@ -115,25 +133,31 @@ void KnuthMorrisPatt(char *text, int tsize, char *pattern, int psize, int &count
     int i = 0, j = 0; // i is index of text, j is index of pattern
     while ((tsize - i) >= (psize - j))
     {
-
-        if (text[i] == pattern[j]) // Kiểm tra từng kí tự
+        // if the characters match
+        if (text[i] == pattern[j])
         {
+            // move to the next character
             i++;
             j++;
         }
 
-        if (j == psize) // duyệt hết chuỗi pattern
+        // the pattern has been fully matched
+        if (j == psize)
         {
             count++;
+            // move to the position indicated by the previous element
             j = lps[j - 1];
         }
 
+        // the characters do not match
         if (text[i] != pattern[j] && i < tsize)
         {
-            // Xuất hiện sai khác
+
             if (j != 0)
+                // move to the position indicated by the previous element
                 j = lps[j - 1];
             else
+                // move to the next character in the text
                 i++;
         }
     }
@@ -144,32 +168,36 @@ void BoyerMoore(char *text, int tsize, char *pattern, int psize, int &count)
 {
     // create bad match table
     int bmt[TABLE_LENGTH];
-    
-    // Nếu ký tự không tồn tại trong mảng pattern hoặc là ký tự cuối của chuỗi pattern -> gán giá trị bằng psize
-    // Ngược lại gán giá trị bằng psize - i - 1  
+
+    // if the character is not exist in the pattern or it is the last character of the pattern, set its value to the size of the pattern
+    // Ngược lại gán giá trị bằng psize - i - 1
+    // Otherwise, set its value to the size of the pattern minus its index in the pattern minus 1
     for (int i = 0; i < TABLE_LENGTH; i++)
-        bmt[i] = psize; // 
+        bmt[i] = psize; //
+
     for (int i = 0; i < psize - 1; i++)
         bmt[(int)(pattern[i])] = psize - i - 1;
 
-    int s = 0; // độ dời của chuỗi pattern so với ban đầu
+    int s = 0; // the shift variable
     while (s <= (tsize - psize))
     {
-        int j = psize - 1; // Duyệt chuỗi pattern từ cuối -> đầu
+        int j = psize - 1; // the last character of the pattern
 
-        while (j >= 0 && pattern[j] == text[s + j]) // kiểm tra từng ký tự
+        // compare the charaters of the pattern and text
+        while (j >= 0 && pattern[j] == text[s + j])
             j--;
-        if (j < 0) // chuỗi pattern tồn tại trong text
+        if (j < 0) // the pattern is found in the text
         {
+
             count++;
-            if (s + psize < tsize) 
-            // bmt[(int)text[s + psize - 1]] là giá trị của ký tự đang xét của chuỗi text trong bảng bmt
-            // Dịch chuỗi pattern sao cho ký tự cuối cùng trong pattern bằng ký tự tiếp theo trong chuỗi text
+            // shift the pattern by the value of the last character in the bad match table
+            if (s + psize < tsize)
                 s += bmt[(int)text[s + psize - 1]];
             else
-                s++; // ngoài phạm vi của mảng
+                s++; // beyond the scope of the pattern
         }
         else
+            // shift the pattern by the value ò the mismatched character in the bad match table
             s += bmt[(int)text[s + psize - 1]];
     }
 }
@@ -185,6 +213,7 @@ void Search(const char *filename, char *pattern, int type)
     fstream f(filename, ios::in);
     readfile(f, text, tsize);
 
+    // count processing time
     auto start = high_resolution_clock::now();
 
     switch (type)
@@ -208,5 +237,5 @@ void Search(const char *filename, char *pattern, int type)
     }
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<nanoseconds>(stop - start);
-    cout << count << " - " << duration.count() << endl;
+    cout << count << " - " << duration.count() << endl; // print
 }

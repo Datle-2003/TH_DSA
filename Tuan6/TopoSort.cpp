@@ -60,7 +60,7 @@ void TopoSort()
     {
         cout << q->key << " "; // print current node
         size--;
-        trailer *t = q->trail; // traversal nodes after current node
+        trailer *t = q->trail; // traversal nodes after current node and decrease count atribute by one
         q = q->next;
         while (t)
         {

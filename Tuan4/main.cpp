@@ -20,7 +20,7 @@ int main()
 {
     int x, y, n = 1;
     CNode *tail = NULL;
-
+    // demo for circle linked-list
     while (n > 0 && n < 8)
     {
         n = printMenu();
