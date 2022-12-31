@@ -5,8 +5,9 @@
 #include <chrono>
 #include <cmath>
 #include <cstring>
+#include <iomanip>
 
-#define MAX_TEXT_LENGTH 1000
+#define MAX_TEXT_LENGTH 100000
 #define TABLE_LENGTH 256
 
 

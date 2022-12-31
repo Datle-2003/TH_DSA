@@ -5,7 +5,14 @@ void readfile(fstream &f, char *s, int &n)
 {
     char buffer;
     while (f >> buffer)
+    {
         s[n++] = buffer;
+        if (n > MAX_TEXT_LENGTH)
+        {
+            f.close();
+            return;
+        }
+    }
     f.close();
 }
 
@@ -212,7 +219,6 @@ void Search(const char *filename, char *pattern, int type)
 
     fstream f(filename, ios::in);
     readfile(f, text, tsize);
-
     // count processing time
     auto start = high_resolution_clock::now();
 
@@ -233,9 +239,10 @@ void Search(const char *filename, char *pattern, int type)
     default:
         cerr << "Error name of searching algorithm!\n";
         return;
-        break;
     }
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<nanoseconds>(stop - start);
-    cout << count << " - " << duration.count() << endl; // print
+    double elapsedTime = double(duration.count()) / 1000000; // convert nanosecond to millisecond
+
+    cout << count << " - " << std::fixed << std::setw(8) << elapsedTime << endl; // print
 }

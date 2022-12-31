@@ -21,8 +21,14 @@ int findGCD(int a, int b)
     return findGCD(b, a % b);
 }
 
-void buildSparseTable(vector<int> &nums, const char *filename, string type)
+
+
+
+void buildSparseTable(vector<int> &nums, const char *tablename, string type, const char* filename)
 {
+    SparseTable ST;
+    ST.type = type;
+    ST.name = tablename;
     int n = nums.size();
     int (*condition)(int, int);
     int tp = typeOfTable(type);
@@ -32,29 +38,28 @@ void buildSparseTable(vector<int> &nums, const char *filename, string type)
         condition = findMax;
     else
         condition = findGCD;
-    vector<vector<int>> table;
     // table has n row
-    table.resize(n);
+    ST.table.resize(n);
 
     // build sparse table
 
     // for the first col
     // min, max, gcd of single element is element itself
     for (int i = 0; i < n; i++)
-        table[i].push_back(nums[i]);
+        ST.table[i].push_back(nums[i]);
 
     // for the others col
     for (int j = 1; (1 << j) <= n; j++)
     {
         for (int i = 0; i + (1 << j) - 1 < n; i++)
         {
-            int tmp = condition(table[i][j - 1], table[i + (1 << (j - 1))][j - 1]);
-            table[i].push_back(tmp);
+            int tmp = condition(ST.table[i][j - 1], ST.table[i + (1 << (j - 1))][j - 1]);
+            ST.table[i].push_back(tmp);
         }
     }
     // save the table to file and print to the console
-    writeToFile(table, filename, type);
-    printToConsole(table, type);
+    writeToFile(ST, filename);
+    printToConsole(ST);
 }
 
 // 1 - MIN

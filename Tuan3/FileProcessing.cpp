@@ -1,43 +1,79 @@
 #include "FileProcessing.h"
+#include "SparseTable.h"
 
-vector<vector<int>> readFile(const char *filename, string &type)
+SparseTable readTable(istream &f, string tablename)
 {
-    vector<vector<int>> table;
-    fstream f(filename, ios::in);
-    std::string line;
-    std::getline(f, line);
-    stringstream s(line);
-    s >> type;
+    SparseTable ST;
+
+    std::string line, tmp, name;
+
+    while (std::getline(f, line))
+    {
+        stringstream ss(line);
+        if (line.find("Tablename") != std::string::npos)
+        {
+            ss >> tmp >> name;
+            if (name == tablename)
+            {
+                ST.name = name;
+                std::getline(f, line);
+
+            }
+
+        }
+    }
+
+    vector<string> temp = {2, ""};
+    for (int i = 0; i < 2; i++)
+    {
+        std::getline(f, line);
+        stringstream ss(line);
+        ss >> tmp >> temp[i];
+    }
+    ST.name = temp[0];
+    ST.type = temp[1];
+
     while (std::getline(f, line)) // read line by line
     {
-        vector<int> tmp;
+        vector<int> nums;
         std::stringstream ss(line);
         int a;
         while (ss >> a) // extract each element
-            tmp.push_back(a);
-        table.push_back(tmp);
+            nums.push_back(a);
+        ST.table.push_back(nums);
     }
-    return table;
+    return ST;
 }
 
-void print(vector<vector<int>> &table, ostream &f, string type)
+void deleteTable(const char *filename, string tablename) // ten bang can xoa
 {
-    f << type << "\n";
-    for (int i = 0; i < table.size(); i++)
+    fstream f(filename, ios::in || ios::app);
+    vector<SparseTable> list;
+    int i = 0;
+    while (!f.eof())
+      //  list[i++] = readTable(f);
+
+    for (int j = 0; j < list.size(); i++)
     {
-        for (int j = 0; j < table[i].size(); j++)
-            f << setw(3) << table[i][j] << " ";
+        if (list[j].name == tablename)
+            list.erase(list.begin() + j);
+    }
+
+    f.close();
+    fstream f(filename, ios::out);
+    for (int i = 0; i < list.size(); i++)
+        print(list[i], f);
+}
+
+void print(SparseTable &ST, ostream &f)
+{
+    f.seekp(ios::end);
+    f << "Tablename:  " << ST.name << "\n";
+    f << "Tabletype:  " << ST.type << '\n';
+    for (int i = 0; i < ST.table.size(); i++)
+    {
+        for (int j = 0; j < ST.table[i].size(); j++)
+            f << setw(3) << ST.table[i][j] << " ";
         f << "\n";
     }
-}
-
-void writeToFile(vector<vector<int>> &table, const char *filename, string type)
-{
-    fstream f(filename, ios::out);
-    print(table, f, type);
-}
-
-void printToConsole(vector<vector<int>> &table, string type)
-{
-    print(table, std::cout, type);
 }
